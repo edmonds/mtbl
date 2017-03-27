@@ -1,3 +1,22 @@
+mtbl (1.0.0-1) experimental; urgency=medium
+
+  * New upstream release.
+  * debian/control: Add build dependency on libzstd-dev
+  * debian/control: Use debhelper 10
+  * debian/compat: Bump debhelper compat level to 10
+  * debian/rules: Migrate to automatic -dbgsym package
+  * debian/control: Remove libmtbl0-dbg package
+  * debian/control: Bump ABI from 0 to 1
+  * debian/: libmtbl0.install -> libmtbl1.install
+  * debian/: libmtbl0.symbols -> libmtbl1.symbols
+  * debian/libmtbl1.symbols: Update symbols for 1.0.0
+  * debian/rules: 'dh_strip --dbgsym-migration' not needed since the ABI
+    is being bumped at the same time
+  * debian/gbp.conf: Remove [dch] id-length
+  * debian/rules: Disable the test suite (broken in the 1.0.0 release)
+
+ -- Robert Edmonds <edmonds@debian.org>  Sun, 26 Mar 2017 21:31:33 -0400
+
 mtbl (0.8.0-1) unstable; urgency=medium
 
   * New upstream release.
