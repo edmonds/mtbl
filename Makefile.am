@@ -13,7 +13,8 @@ AM_CPPFLAGS = \
 	-I${top_srcdir}/mtbl
 AM_CFLAGS = \
 	${my_CFLAGS} \
-	$(liblz4_CFLAGS)
+	$(liblz4_CFLAGS) \
+	$(libzstd_CFLAGS)
 AM_LDFLAGS =
 
 #
@@ -22,7 +23,7 @@ AM_LDFLAGS =
 ##
 #
 
-LIBMTBL_VERSION_INFO=0:0:0
+LIBMTBL_VERSION_INFO=1:0:0
 
 include_HEADERS = mtbl/mtbl.h
 lib_LTLIBRARIES = mtbl/libmtbl.la
@@ -31,7 +32,9 @@ mtbl_libmtbl_la_SOURCES = \
 	libmy/crc32c.c libmy/crc32c.h libmy/crc32c-slicing.c libmy/crc32c-sse42.c \
 	libmy/heap.c libmy/heap.h \
 	libmy/my_alloc.h \
+	libmy/my_byteorder.h \
 	libmy/my_fileset.c libmy/my_fileset.h \
+	libmy/my_time.h \
 	libmy/ubuf.h \
 	libmy/vector.h \
 	mtbl/block.c \
@@ -52,7 +55,7 @@ mtbl_libmtbl_la_SOURCES = \
 	mtbl/varint.c \
 	mtbl/writer.c
 
-mtbl_libmtbl_la_LIBADD = -lsnappy -lz $(liblz4_LIBS)
+mtbl_libmtbl_la_LIBADD = -lsnappy -lz $(liblz4_LIBS) $(libzstd_LIBS)
 mtbl_libmtbl_la_LDFLAGS = $(AM_LDFLAGS) \
 	-version-info $(LIBMTBL_VERSION_INFO)
 if HAVE_LD_VERSION_SCRIPT
@@ -109,6 +112,17 @@ check_PROGRAMS += t/test-crc32c
 t_test_crc32c_SOURCES = t/test-crc32c.c
 t_test_crc32c_LDADD = mtbl/libmtbl.la
 
+TESTS += t/test-fileset-partition.sh
+EXTRA_DIST += t/test-fileset-partition.sh
+EXTRA_DIST += t/fileset-partition/test.fileset
+EXTRA_DIST += t/fileset-partition/file1.mtbl
+EXTRA_DIST += t/fileset-partition/file2.mtbl
+EXTRA_DIST += t/fileset-partition/file3.mtbl
+check_PROGRAMS += t/test-fileset-partition
+t_test_fileset_partition_SOURCES = t/test-fileset-partition.c
+t_test_fileset_partition_LDADD = mtbl/libmtbl.la
+t/test-fileset-partition.sh: t/test-fileset-partition
+
 TESTS += t/test-fixed
 check_PROGRAMS += t/test-fixed
 t_test_fixed_SOURCES = t/test-fixed.c
@@ -128,6 +142,11 @@ TESTS += t/test-vector
 check_PROGRAMS += t/test-vector
 t_test_vector_SOURCES = t/test-vector.c
 t_test_vector_LDADD = mtbl/libmtbl.la
+
+TESTS += t/test-iter-seek
+check_PROGRAMS += t/test-iter-seek
+t_test_iter_seek_SOURCES = t/test-iter-seek.c
+t_test_iter_seek_LDADD = mtbl/libmtbl.la
 
 TESTS += t/test-verify.sh
 EXTRA_DIST += t/test-verify.sh
@@ -184,6 +203,7 @@ dist_man_MANS = \
 	man/mtbl_dump.1 \
 	man/mtbl_info.1 \
 	man/mtbl_merge.1 \
+	man/mtbl_verify.1 \
 	man/mtbl_iter.3 \
 	man/mtbl_metadata.3 \
 	man/mtbl_source.3 \
@@ -201,6 +221,7 @@ EXTRA_DIST += \
 	man/mtbl_dump.1.txt \
 	man/mtbl_info.1.txt \
 	man/mtbl_merge.1.txt \
+	man/mtbl_verify.1.txt \
 	man/mtbl_iter.3.txt \
 	man/mtbl_metadata.3.txt \
 	man/mtbl_source.3.txt \
