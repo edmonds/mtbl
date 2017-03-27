@@ -4,5 +4,5 @@
 	dh $@ --with autoreconf
 
 override_dh_strip:
-	dh_strip -p libmtbl0 --dbg-package=libmtbl0-dbg
+	dh_strip --dbgsym-migration='libmtbl0-dbg (<< 0.8.0-1~)'
 	dh_strip -a --remaining-packages
